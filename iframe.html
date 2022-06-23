@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>子页面</h2>
+    <div>
+      <h3 id="test">接收消息区域</h3>
+      <div><span>标题:</span><span id="title"></span></div>
+      <div><span>描述:</span><span id="describe"></span></div>
+      <hr />
+      <div><span>信息来源:</span><span id="origin"></span></div>
+      <div><span>数据格式:</span><span id="format"></span></div>
+    </div>
+    <hr />
+    <button id="sure">确认接收消息</button>
+  </body>
+  <script>
+    window.onload = function () {
+      // 字符串转为json格式
+      function stringToJson(jsonMsg) {
+        return JSON.parse(jsonMsg);
+      }
+      // 获取元素
+      const title = document.getElementById("title");
+      const describe = document.getElementById("describe");
+      const origin = document.getElementById("origin");
+      const format = document.getElementById("format");
+      const sure = document.getElementById("sure");
+      // 监听message事件
+      window.addEventListener(
+        "message",
+        function (event) {
+          if (event.origin !== "http://localhost:3001") {
+            return;
+          }
+          console.log(event);
+          // 将数据放进页面
+          format.innerHTML = event.data;
+          const data = stringToJson(event.data);
+          title.innerHTML = data.title;
+          describe.innerHTML = data.describe;
+          title.style.color = data.color;
+          origin.innerHTML = event.origin;
+          console.log(event.source);
+        },
+        false
+      );
+      sure.onclick = function () {
+        // window.parent 返回当前窗口的直接父对象，而 window.top 返回最顶层的窗口对象。
+        window.top.postMessage("子页面消息收到", "http://localhost:3001");
+      };
+    };
+  </script>
+</html>

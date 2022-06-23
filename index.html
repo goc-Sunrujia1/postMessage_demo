@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <script type="text/javascript" src="./test.ts"></script> -->
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>主页面</h1>
+    <button id="postmsg">发送消息</button>
+    <iframe
+      src="http://localhost:3000"
+      id="myframe"
+      style="display: none"
+    ></iframe>
+    <div>
+      <h2>主页面接收消息区域</h2>
+      <span id="message"></span>
+    </div>
+  </body>
+
+  <script>
+    window.onload = function () {
+      function jsonToString(jsonMsg) {
+        return JSON.stringify(jsonMsg);
+      }
+      const postmsg = document.getElementById("postmsg");
+      const myframe = document.getElementById("myframe");
+      const message = document.getElementById("message");
+      postmsg.onclick = function () {
+        const msg = {
+          title: "这是个标题",
+          describe: "这是个描述",
+          color: "#1171ee",
+        };
+        myframe.style.display = "block";
+        myframe.contentWindow.postMessage(
+          jsonToString(msg),
+          "http://localhost:3000"
+        );
+      };
+      window.addEventListener("message", function (event) {
+        if (event.origin !== "http://localhost:3000") {
+            return;
+          }
+        message.innerHTML = "收到" + event.origin + "消息：" + event.data;
+      });
+    };
+  </script>
+</html>
